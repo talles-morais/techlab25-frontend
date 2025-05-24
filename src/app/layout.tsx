@@ -8,8 +8,8 @@ const workSans = Work_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Finanças pessoais",
-  description: "Gerencie suas finanças através do nosso sistema!",
+  title: "EconoView",
+  description: "Gerencie suas finanças através do nosso app!",
 };
 
 export default function RootLayout({
