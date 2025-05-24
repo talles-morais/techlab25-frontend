@@ -49,6 +49,7 @@ export default function RegisterForm() {
             placeholder={field.placeholder}
             type={field.type}
             {...register(field.name)}
+            error={errors[field.name]?.message}
           />
         ))}
       </div>
