@@ -41,7 +41,7 @@ export default function RegisterForm() {
 
   async function submitHandler(data: FormInputData) {
     try {
-      const response = await fetcher("/register", {
+      await fetcher("/register", {
         method: "POST",
         body: JSON.stringify(data),
       });
@@ -64,7 +64,7 @@ export default function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className="w-full">
-      <div className="flex flex-col gap-2 my-3">
+      <div className="flex flex-col gap-2 md:gap-4 my-3">
         {formFields.map((field) => (
           <FormInput
             key={field.placeholder}
@@ -78,7 +78,7 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        className="bg-primary text-white rounded-lg py-2 px-3 w-full font-bold text-lg hover:scale-105 transition-all"
+        className="bg-primary text-white rounded-lg py-2 px-3 w-full font-bold text-lg hover:scale-105 transition-all md:text-2xl"
       >
         Cadastrar
       </button>
