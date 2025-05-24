@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import FormInput from "../FormInput";
+import { fetcher } from "@/lib/fetcher";
 
 type FormInputData = {
   name: string;
@@ -35,9 +36,19 @@ export default function RegisterForm() {
     mode: "onSubmit",
   });
 
-  function submitHandler(data: FormInputData) {
-    console.log(data);
-    reset();
+  async function submitHandler(data: FormInputData) {
+    try {
+      const response = await fetcher("/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      console.log(response);
+
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
