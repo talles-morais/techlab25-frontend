@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import FormInput from "../FormInput";
 import { fetcher } from "@/lib/fetcher";
+import { toast, Toaster } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormInputData = {
   name: string;
@@ -26,6 +28,7 @@ export const registerSchema = z
   });
 
 export default function RegisterForm() {
+  const router = useRouter()
   const {
     register,
     reset,
@@ -43,11 +46,19 @@ export default function RegisterForm() {
         body: JSON.stringify(data),
       });
 
-      console.log(response);
+      toast.success("Cadastrado com sucesso", {
+        description: "Vá para a página de login",
+        action: {
+          label: "Login",
+          onClick: () => router.push("/login")
+        }
+      })
 
       reset();
     } catch (error) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : "Algo deu errado";
+      toast.error(errorMessage);
     }
   }
 
@@ -71,6 +82,8 @@ export default function RegisterForm() {
       >
         Cadastrar
       </button>
+
+      <Toaster richColors/>
     </form>
   );
 }
