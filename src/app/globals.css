@@ -1,21 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  --color-light-background: #ebffff;
+  --color-dark-background: #161925;
+  --color-primary: #61c0bf;
+  --color-dark-secondary: #fae3d9;
+  --color-light-secondary: #020122;
+  --font-work-sans: var(--font-work-sans);
 }
