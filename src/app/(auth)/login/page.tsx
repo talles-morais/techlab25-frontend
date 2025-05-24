@@ -1,9 +1,9 @@
-import RegisterForm from "@/components/auth/RegisterForm";
+import LoginForm from "@/components/auth/LoginForm";
 import MuiDivider from "@/components/mui/Divider";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function CadastroPage() {
+export default function Login() {
   return (
     <div className="h-[100dvh] flex justify-center items-center font-work-sans">
       <main className="flex flex-col items-center rounded-lg bg-light-background px-3 py-14 max-w-[90vw] md:text-xl sm:max-w-[500px] w-full">
@@ -17,21 +17,21 @@ export default function CadastroPage() {
           alt="Logo do EconoView, em formato horizontal, com ícone e slogan dizendo 'Bem vindo(a) ao EconoView, seu app de finanças pessoal!"
         />
 
-        <h1 className="font-bold text-xl md:text-3xl">Cadastre-se</h1>
+        <h1 className="font-bold text-xl md:text-3xl">Faça login</h1>
 
-        <RegisterForm />
+        <LoginForm />
 
         <MuiDivider colorHex="#020122" />
 
         {/* login com google aqui */}
 
         <span className="text-xs md:text-base mt-2">
-          Já tem conta?{" "}
+          Não tem conta?{" "}
           <Link
-            href="/login"
+            href="/cadastro"
             className="inline-block underline font-bold hover:scale-105 transition-all"
           >
-            Faça login
+            Cadastre-se
           </Link>
         </span>
       </main>
