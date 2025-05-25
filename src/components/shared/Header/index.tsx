@@ -18,7 +18,7 @@ export default function Header() {
 
       {/* desktop */}
       <img
-        className="h-11"
+        className="hidden md:block h-11"
         src="/logo/light-horizontal.svg"
         alt="Ícone da logo EconoView"
       />
