@@ -1,3 +1,4 @@
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import LoginForm from "@/components/auth/LoginForm";
 import MuiDivider from "@/components/mui/Divider";
 import Image from "next/image";
@@ -20,10 +21,6 @@ export default function Login() {
         <h1 className="font-bold text-xl md:text-3xl">Faça login</h1>
 
         <LoginForm />
-
-        <MuiDivider colorHex="#020122" />
-
-        {/* login com google aqui */}
 
         <span className="text-xs md:text-base mt-2">
           Não tem conta?{" "}

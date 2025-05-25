@@ -18,9 +18,10 @@ export async function fetcher<T>(
   const res = await fetch(url, {
     ...options,
     headers: {
-      "Content-type": "application/json",
       ...(options?.headers || {}),
+      "Content-Type": "application/json",
     },
+    credentials: "include"
   });
 
   if (!res.ok) {

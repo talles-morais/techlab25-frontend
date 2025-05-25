@@ -21,10 +21,6 @@ export default function CadastroPage() {
 
         <RegisterForm />
 
-        <MuiDivider colorHex="#020122" />
-
-        {/* login com google aqui */}
-
         <span className="text-xs md:text-base mt-2">
           Já tem conta?{" "}
           <Link

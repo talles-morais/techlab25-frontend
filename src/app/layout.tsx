@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Work_Sans } from "next/font/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",
-  subsets: ["latin"]
-})
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "EconoView",
@@ -18,12 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${workSans.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <html lang="en">
+        <body className={`${workSans.variable} antialiased`}>{children}</body>
+      </html>
+    </GoogleOAuthProvider>
   );
 }
