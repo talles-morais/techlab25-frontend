@@ -29,15 +29,16 @@ const items = [
   { title: "Categorias", url: "#", icon: Ungroup },
   { title: "Transações", url: "#", icon: BadgeCent },
 ];
- 
+
 export function AppSidebar() {
-  const { openMobile, toggleSidebar } = useSidebar();
+  const { open, openMobile, toggleSidebar } = useSidebar();
 
   return (
     <div className="flex">
+      {/* open on mobile */}
       <button
         onClick={() => toggleSidebar()}
-        className="flex items-center z-50 p-2 text-xl font-bold text-primary"
+        className="flex md:hidden items-center z-50 p-2 text-xl font-bold text-primary"
       >
         {openMobile ? (
           <ChevronRight size={23} strokeWidth={3} />
@@ -47,20 +48,41 @@ export function AppSidebar() {
         <span>Dashboard</span>
       </button>
 
+      {/* open on desktop */}
+      <button
+        onClick={() => toggleSidebar()}
+        className="hidden md:flex items-center z-50 p-2 text-xl font-bold text-primary"
+      >
+        {!open && (
+          <>
+            <ChevronLeft size={23} strokeWidth={3} />
+            <span>Dashboard</span>
+          </>
+        )}
+      </button>
+
       <Sidebar variant="floating" side="right" collapsible="offcanvas">
-        <SidebarHeader>
-          <button onClick={() => toggleSidebar()} className="relative flex justify-between w-full">
-            <ChevronRight size={23} strokeWidth={3} className="text-primary"/>
-            <Image src="/logo/light-horizontal.svg" fill alt="Logo horizonal do econoview" className="flex justify-end max-w-[160px]"/>
+        <SidebarHeader className="pt-4">
+          <button
+            onClick={() => toggleSidebar()}
+            className="relative flex justify-between w-full"
+          >
+            <ChevronRight size={23} strokeWidth={3} className="text-primary" />
+            <Image
+              src="/logo/light-horizontal.svg"
+              fill
+              alt="Logo horizonal do econoview"
+              className="flex justify-end max-w-[160px]"
+            />
           </button>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarMenu className="flex flex-col px-1 py-3.5 items-end text-primary">
+          <SidebarMenu className="flex flex-col px-1 py-3.5 items-end text-primary gap-4">
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <Link href={item.url} className="flex items-center gap-2">
-                    <span className="text-xl font-bold hover:underline group-hover:text-primary">
+                    <span className="text-2xl font-bold hover:underline group-hover:text-primary">
                       {item.title}
                     </span>
                     <item.icon

@@ -7,8 +7,7 @@ export default function GeneralLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider
-    >
+    <SidebarProvider defaultOpen={false}>
       <div className="w-full">
         <Header />
         {children}
