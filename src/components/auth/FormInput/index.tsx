@@ -22,6 +22,7 @@ export default function FormInput({
         }`}
         type={type}
         placeholder={placeholder}
+        step={0.01}
         {...rest}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
