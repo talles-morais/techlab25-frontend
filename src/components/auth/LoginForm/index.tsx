@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import GoogleLoginButton from "../GoogleLoginButton";
 import MuiDivider from "@/components/mui/Divider";
-import { GoogleLogin } from "@react-oauth/google";
 
 type FormInputData = {
   email: string;
@@ -46,7 +45,7 @@ export default function LoginForm() {
       });
 
       reset();
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       console.error(error);
       const errorMessage =

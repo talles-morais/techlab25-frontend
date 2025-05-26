@@ -83,7 +83,7 @@ export default function RegisterForm() {
         description: "Redirecionando para seu dashboard...",
       });
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Erro no login Google:", error);
       toast.error("Falha ao logar com Google");
