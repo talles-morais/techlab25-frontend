@@ -8,28 +8,38 @@ import { fetcher } from "@/lib/fetcher";
 interface Category {
   id: string;
   name: string;
+  iconName: string;
 }
 
 export default function CategoryList() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetcher<Category[]>("/categories", {
-          method: "GET",
-        });
-        setCategories(response);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+   const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const response = await fetcher<Category[]>("/categories", {
+        method: "GET",
+      });
+      setCategories(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Recarregar categorias quando o diálogo fechar (de true para false)
+  useEffect(() => {
+    if (dialogOpen === false) {
+      fetchCategories();
+    }
+  }, [dialogOpen]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -42,7 +52,7 @@ export default function CategoryList() {
             placeholder="Pesquisar categoria"
           />
         </form>
-        <NewCategory />
+        <NewCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen}/>
       </header>
 
       <section className="flex flex-wrap gap-1 items-center justify-center min-h-[100px]">
@@ -54,6 +64,7 @@ export default function CategoryList() {
               key={category.id}
               categoryName={category.name}
               totalTransactionsThisMonth={12}
+              iconName={category.iconName}
             />
           ))
         ) : (
