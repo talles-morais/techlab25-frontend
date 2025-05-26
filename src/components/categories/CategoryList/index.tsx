@@ -4,6 +4,7 @@ import { Search, Loader2 } from "lucide-react";
 import NewCategory from "../NewCategory";
 import CategoryCard from "../CategoryCard";
 import { fetcher } from "@/lib/fetcher";
+import { Toaster } from "sonner";
 
 interface Category {
   id: string;
@@ -16,13 +17,14 @@ export default function CategoryList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-   const fetchCategories = async () => {
+  const fetchCategories = async () => {
     setLoading(true);
     try {
       const response = await fetcher<Category[]>("/categories", {
         method: "GET",
       });
-      setCategories(response);
+
+      if (response) setCategories(response);
     } catch (error) {
       console.error(error);
     } finally {
@@ -52,7 +54,7 @@ export default function CategoryList() {
             placeholder="Pesquisar categoria"
           />
         </form>
-        <NewCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen}/>
+        <NewCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
       </header>
 
       <section className="flex flex-wrap gap-1 items-center justify-center min-h-[100px]">
@@ -62,15 +64,16 @@ export default function CategoryList() {
           categories.map((category) => (
             <CategoryCard
               key={category.id}
-              categoryName={category.name}
-              totalTransactionsThisMonth={12}
-              iconName={category.iconName}
+              category={category}
+              onDelete={fetchCategories}
             />
           ))
         ) : (
           <span>Sem categorias disponíveis, adicione uma nova!</span>
         )}
       </section>
+
+      <Toaster richColors />
     </div>
   );
 }

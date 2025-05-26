@@ -75,11 +75,10 @@ export function IconPickerDialog({
                   onSelect(name);
                   onOpenChange(false); // fecha o diálogo após seleção
                 }}
-                className="p-2 border rounded hover:bg-gray-100 flex flex-col items-center"
+                className="p-2 border rounded bg-white hover:bg-gray-100 flex flex-col items-center"
                 type="button"
               >
                 <Icon className="w-6 h-6" />
-                <span className="text-[10px] mt-1">{name}</span>
               </button>
             );
           })}

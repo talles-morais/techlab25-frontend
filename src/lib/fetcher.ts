@@ -7,7 +7,7 @@ type FetcherOptions = RequestInit & {
 export async function fetcher<T>(
   endpoint: string,
   options?: FetcherOptions
-): Promise<T> {
+): Promise<T | void> {
   let url = `${API_BASE_URL}${endpoint}`;
 
   if (options?.params) {
@@ -21,13 +21,19 @@ export async function fetcher<T>(
       ...(options?.headers || {}),
       "Content-Type": "application/json",
     },
-    credentials: "include"
+    credentials: "include",
   });
+
+  const contentType = res.headers.get("Content-Type") || "";
 
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null);
     throw new Error(errorBody?.message || "Erro na requisição");
   }
 
-  return res.json();
+  if (contentType.includes("application/json")) {
+    return res.json();
+  }
+
+  return;
 }
