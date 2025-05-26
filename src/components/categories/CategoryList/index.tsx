@@ -1,8 +1,36 @@
-import { Search } from "lucide-react";
+"use client";
+import { useEffect, useState } from "react";
+import { Search, Loader2 } from "lucide-react";
 import NewCategory from "../NewCategory";
 import CategoryCard from "../CategoryCard";
+import { fetcher } from "@/lib/fetcher";
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 export default function CategoryList() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetcher<Category[]>("/categories", {
+          method: "GET",
+        });
+        setCategories(response);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="flex flex-col gap-3">
       <header className="flex gap-1.5 w-full justify-between">
@@ -17,37 +45,21 @@ export default function CategoryList() {
         <NewCategory />
       </header>
 
-      <section className="flex flex-wrap gap-1">
-        {categories.map((category) => (
-          <CategoryCard
-            key={category.categoryName}
-            categoryName={category.categoryName}
-            totalTransactionsThisMonth={category.totalTransactionsThisMonth}
-          />
-        ))}
+      <section className="flex flex-wrap gap-1 items-center justify-center min-h-[100px]">
+        {loading ? (
+          <Loader2 className="animate-spin text-gray-500" size={24} />
+        ) : categories.length > 0 ? (
+          categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              categoryName={category.name}
+              totalTransactionsThisMonth={12}
+            />
+          ))
+        ) : (
+          <span>Sem categorias disponíveis, adicione uma nova!</span>
+        )}
       </section>
     </div>
   );
 }
-
-const categories: {
-  categoryName: string;
-  totalTransactionsThisMonth: number;
-}[] = [
-  {
-    categoryName: "Alimentação",
-    totalTransactionsThisMonth: 23,
-  },
-  {
-    categoryName: "Eletrônicos",
-    totalTransactionsThisMonth: 3,
-  },
-  {
-    categoryName: "Casa",
-    totalTransactionsThisMonth: 2,
-  },
-  {
-    categoryName: "Lazer",
-    totalTransactionsThisMonth: 8,
-  },
-];
