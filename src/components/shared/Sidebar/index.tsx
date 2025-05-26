@@ -21,17 +21,22 @@ import {
 } from "@/components/shadcnui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const items = [
-  { title: "Dashboard", url: "#", icon: LayoutDashboard },
-  { title: "Contas", url: "#", icon: Landmark },
-  { title: "Cartões", url: "#", icon: CreditCard },
-  { title: "Categorias", url: "#", icon: Ungroup },
-  { title: "Transações", url: "#", icon: BadgeCent },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Contas", url: "/contas", icon: Landmark },
+  { title: "Cartões", url: "/cartoes", icon: CreditCard },
+  { title: "Categorias", url: "/categorias", icon: Ungroup },
+  { title: "Transações", url: "/transacoes", icon: BadgeCent },
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
   const { open, openMobile, toggleSidebar } = useSidebar();
+
+  const currentItem = items.find((item) => pathname.startsWith(item.url));
+  const currentTitle = currentItem ? currentItem.title : "Dashboard";
 
   return (
     <div className="flex">
@@ -45,7 +50,7 @@ export function AppSidebar() {
         ) : (
           <ChevronLeft size={23} strokeWidth={3} />
         )}
-        <span>Dashboard</span>
+        <span>{currentTitle}</span>
       </button>
 
       {/* open on desktop */}
@@ -81,7 +86,7 @@ export function AppSidebar() {
             {items.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <Link href={item.url} className="flex items-center gap-2">
+                  <Link onClick={toggleSidebar} href={item.url} className="flex items-center gap-2">
                     <span className="text-2xl font-bold hover:underline group-hover:text-primary">
                       {item.title}
                     </span>
