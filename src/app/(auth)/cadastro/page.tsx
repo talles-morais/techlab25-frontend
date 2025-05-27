@@ -1,5 +1,4 @@
 import RegisterForm from "@/components/auth/RegisterForm";
-import MuiDivider from "@/components/mui/Divider";
 import Image from "next/image";
 import Link from "next/link";
 
