@@ -14,7 +14,6 @@ import {
 import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { IconPickerDialog } from "../IconPickerDialog";
-import { toast } from "sonner";
 
 interface EditCategoryProps {
   dialogOpen: boolean;
