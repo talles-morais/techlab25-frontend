@@ -11,34 +11,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcnui/dialog";
-import { Plus } from "lucide-react";
-import { IconPickerDialog } from "../IconPickerDialog"; // ajuste a importação
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
-import { fetcher } from "@/lib/fetcher";
-interface NewCategoryProps {
+import { IconPickerDialog } from "../IconPickerDialog";
+import { toast } from "sonner";
+
+interface EditCategoryProps {
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
+  initialName: string;
+  initialIconName: string | null;
+  onSubmit: (updatedCategory: { name: string; iconName: string | null }) => Promise<void>;
 }
 
-export default function NewCategory({
+export default function EditCategory({
   dialogOpen,
   setDialogOpen,
-}: NewCategoryProps) {
-  const [iconName, setIconName] = useState<string | null>(null);
-  const [name, setName] = useState<string>("");
+  initialName,
+  initialIconName,
+  onSubmit,
+}: EditCategoryProps) {
+  const [iconName, setIconName] = useState<string | null>(initialIconName);
+  const [name, setName] = useState<string>(initialName);
   const [iconDialogOpen, setIconDialogOpen] = useState(false);
+
+  // Atualiza o estado local se as props iniciais mudarem
+  useEffect(() => {
+    setName(initialName);
+    setIconName(initialIconName);
+  }, [initialName, initialIconName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    await fetcher("/categories/create", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        iconName,
-      }),
-    });
+    await onSubmit({ name, iconName });
     setDialogOpen(false);
   };
 
@@ -46,16 +51,10 @@ export default function NewCategory({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <Button className="border border-light-secondary bg-primary text-xs md:text-base">
-          Categoria <Plus />
-        </Button>
-      </DialogTrigger>
-
       <DialogContent className="flex flex-col items-start sm:max-w-md bg-light-background">
         <DialogHeader className="flex flex-col items-start">
           <DialogTitle className="font-bold text-xl">
-            Criar nova categoria
+            Editar categoria
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full">
@@ -87,8 +86,9 @@ export default function NewCategory({
             type="text"
             placeholder="Nome"
             value={name}
-            onChange={(e: any) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
+
           <DialogFooter className="flex flex-row w-full justify-between ">
             <DialogClose asChild>
               <Button type="button" variant="destructive" className="text-lg">

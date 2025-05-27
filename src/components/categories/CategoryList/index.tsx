@@ -4,7 +4,8 @@ import { Search, Loader2 } from "lucide-react";
 import NewCategory from "../NewCategory";
 import CategoryCard from "../CategoryCard";
 import { fetcher } from "@/lib/fetcher";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
+import EditCategory from "../EditCategory";
 
 interface Category {
   id: string;
@@ -14,7 +15,11 @@ interface Category {
 
 export default function CategoryList() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
@@ -43,10 +48,34 @@ export default function CategoryList() {
     }
   }, [dialogOpen]);
 
+  useEffect(() => {
+    if (editDialogOpen === false) {
+      setSelectedCategory(null);
+      fetchCategories();
+    }
+  }, [editDialogOpen]);
+
+  const handleEditSubmit = async (updatedCategory: {
+    name: string;
+    iconName: string | null;
+  }) => {
+    if (!selectedCategory) return;
+
+    try {
+      await fetcher(`/categories/${selectedCategory.id}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedCategory),
+      });
+      toast.success(`Categoria atualizada com sucesso`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-full">
       <header className="flex gap-1.5 w-full justify-between">
-        <form className="flex flex-1 items-center gap-2 bg-white text-xs rounded-lg border border-light-secondary py-1 px-2">
+        <form className="flex flex-1 items-center gap-2 bg-white text-xs md:text-base rounded-lg border border-light-secondary py-1 px-2">
           <Search size={16} />
           <input
             className="w-full focus:outline-none"
@@ -57,7 +86,7 @@ export default function CategoryList() {
         <NewCategory dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
       </header>
 
-      <section className="flex flex-wrap gap-1 items-center justify-center min-h-[100px]">
+      <section className="flex flex-wrap gap-1 items-center justify-start min-h-[100px]">
         {loading ? (
           <Loader2 className="animate-spin text-gray-500" size={24} />
         ) : categories.length > 0 ? (
@@ -66,6 +95,10 @@ export default function CategoryList() {
               key={category.id}
               category={category}
               onDelete={fetchCategories}
+              onEdit={(category) => {
+                setSelectedCategory(category);
+                setEditDialogOpen(true);
+              }}
             />
           ))
         ) : (
@@ -73,6 +106,13 @@ export default function CategoryList() {
         )}
       </section>
 
+      <EditCategory
+        dialogOpen={editDialogOpen}
+        setDialogOpen={setEditDialogOpen}
+        initialIconName={selectedCategory?.iconName ?? null}
+        initialName={selectedCategory?.name ?? ""}
+        onSubmit={handleEditSubmit}
+      />
       <Toaster richColors />
     </div>
   );
