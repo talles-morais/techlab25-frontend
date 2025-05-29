@@ -47,7 +47,7 @@ export default function AccountCard({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex flex-col justify-between items-start text-start bg-light-background border border-primary rounded-lg px-3 py-2 min-h-36"
+          className="flex flex-col justify-between items-start text-start bg-light-background border border-primary rounded-lg px-3 py-2 w-full min-h-36"
         >
           <h1 className="text-lg font-bold">{bankName}</h1>
           <h2 className="text-sm">{accountType}</h2>
