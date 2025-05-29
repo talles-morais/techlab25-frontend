@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { fetcher } from "@/lib/fetcher";
 import {
   BankAccountType,
-  BankAccountTypeValues,
+  BankAccountTypeLabels,
 } from "@/enums/BankAccountType.enum";
 
 import AccountCard from "../AccountCard";
+import NewAccountDialog from "../NewAccountDialog";
+import { Toaster } from "sonner";
 
-interface BankAccount {
+export interface BankAccount {
   id: string;
   name: string;
   type: BankAccountType;
@@ -25,37 +27,43 @@ interface BankAccount {
 export default function AccountsCarousel() {
   const [accounts, setAccounts] = useState<BankAccount[]>();
 
-  useEffect(() => {
-    async function fetchAccounts() {
-      try {
-        const response = await fetcher<BankAccount[]>("/bank-accounts", {
-          method: "GET",
-        });
+  async function fetchAccounts() {
+    try {
+      const response = await fetcher<BankAccount[]>("/bank-accounts", {
+        method: "GET",
+      });
 
-        if (response) setAccounts(response);
-      } catch (error) {
-        console.error(error);
+      if (response) {
+        setAccounts(response);
       }
+    } catch (error) {
+      console.error(error);
     }
+  }
 
+  useEffect(() => {
     fetchAccounts();
   }, []);
 
   return (
-    <div className="w-full">
-      <Carousel>
+    <div className="flex flex-col items-end gap-4 w-full">
+      <NewAccountDialog onCreate={fetchAccounts} />
+
+      <Carousel className="w-full" draggable>
         <CarouselContent>
           {accounts?.map((account) => (
             <CarouselItem key={account.id} className="basis-3/5 max-w-[160px]">
               <AccountCard
                 bankName={account.name}
-                accountType={BankAccountTypeValues[account.type]}
+                accountType={BankAccountTypeLabels[account.type]}
                 balance={account.balance}
               />
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
+
+      <Toaster richColors/>
     </div>
   );
 }

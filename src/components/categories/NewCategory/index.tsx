@@ -16,6 +16,7 @@ import { IconPickerDialog } from "../IconPickerDialog"; // ajuste a importação
 import { useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { fetcher } from "@/lib/fetcher";
+
 interface NewCategoryProps {
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;

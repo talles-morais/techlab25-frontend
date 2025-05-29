@@ -12,13 +12,16 @@ import {
 } from "@/components/shadcnui/dialog";
 import {
   BankAccountType,
-  BankAccountTypeValues,
+  BankAccountTypeLabels,
 } from "@/enums/BankAccountType.enum";
+import { fetcher } from "@/lib/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
+import { BankAccount } from "../AccountsCarousel";
 
 type FormInputData = {
   name: string;
@@ -26,7 +29,7 @@ type FormInputData = {
   balance: number;
 };
 
-export const newAccountSchema = z.object({
+const newAccountSchema = z.object({
   name: z.string().trim().min(1, "Nome é obrigatório"),
   type: z.nativeEnum(BankAccountType),
   balance: z
@@ -35,20 +38,38 @@ export const newAccountSchema = z.object({
     .nonnegative("Saldo não pode ser negativo"),
 });
 
-export default function NewAccount() {
+interface NewAccountDialogProps {
+  onCreate: () => void;
+}
+
+export default function NewAccountDialog({ onCreate }: NewAccountDialogProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm({
     resolver: zodResolver(newAccountSchema),
     mode: "onSubmit",
   });
 
-  function submitHandler(data: FormInputData) {
-    console.log(data);
+  async function submitHandler(data: FormInputData) {
+    try {
+      const response = await fetcher<BankAccount>("/bank-accounts", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+
+      if (response)
+        toast.success(
+          `Conta ${response.name} criada com sucesso`
+        );
+      onCreate();
+      reset();
+    } catch (error: any) {
+      const message = error?.message || "Erro ao adicionar conta";
+      toast.error(message);
+    }
   }
 
   return (
@@ -86,11 +107,15 @@ export default function NewAccount() {
             className="w-full bg-white border border-primary rounded-lg py-2 px-3 placeholder:text-light-secondary/40"
             {...register("type", { valueAsNumber: true })}
           >
-            {BankAccountTypeValues.map((type, index) => (
-              <option key={type} value={index}>
-                {type}
-              </option>
-            ))}
+            {Object.values(BankAccountType)
+              .filter(
+                (type): type is BankAccountType => typeof type === "number"
+              )
+              .map((type) => (
+                <option key={type} value={type}>
+                  {BankAccountTypeLabels[type]}
+                </option>
+              ))}
           </select>
           <DialogFooter className="flex flex-row w-full justify-between ">
             <DialogClose asChild>
