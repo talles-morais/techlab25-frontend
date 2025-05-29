@@ -51,7 +51,6 @@ export default function ConfirmAction({
   onCancel,
 }: ConfirmActionProps) {
   const handleConfirmClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
     onConfirm();
   };
 

@@ -4,10 +4,16 @@ type FetcherOptions = RequestInit & {
   params?: Record<string, string>;
 };
 
+interface FetcherSuccessResponse<T> {
+  data?: T;
+  status: number;
+  ok: boolean;
+}
+
 export async function fetcher<T>(
   endpoint: string,
   options?: FetcherOptions
-): Promise<T | void> {
+): Promise<FetcherSuccessResponse<T>> {
   let url = `${API_BASE_URL}${endpoint}`;
 
   if (options?.params) {
@@ -32,8 +38,10 @@ export async function fetcher<T>(
   }
 
   if (contentType.includes("application/json")) {
-    return res.json();
+    const data = await res.json();
+    return { data, status: res.status, ok: res.ok };
   }
 
-  return;
+  // Para respostas sem conteúdo (ex: 204 No Content) ou outros tipos de conteúdo
+  return { status: res.status, ok: res.ok };
 }

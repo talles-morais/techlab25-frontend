@@ -61,9 +61,7 @@ export default function NewAccountDialog({ onCreate }: NewAccountDialogProps) {
       });
 
       if (response)
-        toast.success(
-          `Conta ${response.name} criada com sucesso`
-        );
+        toast.success(`Conta ${response.data?.name} criada com sucesso`);
       onCreate();
       reset();
     } catch (error: any) {
@@ -124,9 +122,11 @@ export default function NewAccountDialog({ onCreate }: NewAccountDialogProps) {
               </Button>
             </DialogClose>
 
-            <Button type="submit" className="flex-1 font-bold text-lg">
-              Salvar
-            </Button>
+            <DialogClose asChild>
+              <Button type="submit" className="flex-1 font-bold text-lg">
+                Salvar
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </form>
       </DialogContent>

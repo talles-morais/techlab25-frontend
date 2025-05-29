@@ -34,7 +34,7 @@ export default function AccountsCarousel() {
       });
 
       if (response) {
-        setAccounts(response);
+        setAccounts(response.data);
       }
     } catch (error) {
       console.error(error);
@@ -54,16 +54,18 @@ export default function AccountsCarousel() {
           {accounts?.map((account) => (
             <CarouselItem key={account.id} className="basis-3/5 max-w-[160px]">
               <AccountCard
+                accountId={account.id}
                 bankName={account.name}
                 accountType={BankAccountTypeLabels[account.type]}
                 balance={account.balance}
+                onAccountDeleted={fetchAccounts}
               />
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
 
-      <Toaster richColors/>
+      <Toaster richColors />
     </div>
   );
 }
