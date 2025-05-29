@@ -1,22 +1,56 @@
+"use client";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/shadcnui/carousel";
+import { useEffect, useState } from "react";
+import { fetcher } from "@/lib/fetcher";
+import {
+  BankAccountType,
+  BankAccountTypeValues,
+} from "@/enums/BankAccountType.enum";
+
 import AccountCard from "../AccountCard";
 
+interface BankAccount {
+  id: string;
+  name: string;
+  type: BankAccountType;
+  balance: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function AccountsCarousel() {
+  const [accounts, setAccounts] = useState<BankAccount[]>();
+
+  useEffect(() => {
+    async function fetchAccounts() {
+      try {
+        const response = await fetcher<BankAccount[]>("/bank-accounts", {
+          method: "GET",
+        });
+
+        if (response) setAccounts(response);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchAccounts();
+  }, []);
+
   return (
     <div className="w-full">
       <Carousel>
         <CarouselContent>
-          {mockAccounts.map((account) => (
-            <CarouselItem key={account.bankName} className="basis-3/5 max-w-[160px]">
+          {accounts?.map((account) => (
+            <CarouselItem key={account.id} className="basis-3/5 max-w-[160px]">
               <AccountCard
-                bankName={account.bankName}
-                accountType={account.accountType}
+                bankName={account.name}
+                accountType={BankAccountTypeValues[account.type]}
                 balance={account.balance}
-                icon={account.icon}
               />
             </CarouselItem>
           ))}
@@ -25,29 +59,3 @@ export default function AccountsCarousel() {
     </div>
   );
 }
-
-const mockAccounts: {
-  bankName: string;
-  accountType: string;
-  balance: number;
-  icon: string;
-}[] = [
-  {
-    bankName: "Nubank",
-    accountType: "Conta-corrente",
-    balance: 13343.12,
-    icon: "/icon/bank/nubank.svg",
-  },
-  {
-    bankName: "Inter",
-    accountType: "Conta-corrente",
-    balance: 13343.12,
-    icon: "/icon/bank/inter.svg",
-  },
-  {
-    bankName: "PicPay",
-    accountType: "Conta-corrente",
-    balance: 13343.12,
-    icon: "/icon/bank/picPay.svg",
-  },
-];
