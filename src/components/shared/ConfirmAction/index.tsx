@@ -27,7 +27,7 @@ interface ConfirmActionProps {
   /** Uma descrição mais detalhada sobre a ação a ser confirmada. */
   description: string;
   /** Função a ser executada quando o usuário confirmar a ação. */
-  onConfirm: () => void;
+  onConfirm: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   /** O elemento que acionará a abertura do diálogo, passado como filho. */
   children: React.ReactNode;
   /** Texto a ser exibido no botão de confirmação. @default "Confirmar" */
@@ -51,10 +51,12 @@ export default function ConfirmAction({
   onCancel,
 }: ConfirmActionProps) {
   const handleConfirmClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     onConfirm();
   };
 
   const handleCancelClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     if (onCancel) {
       onCancel();
     }
