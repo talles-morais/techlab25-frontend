@@ -49,7 +49,7 @@ export default function AccountsCarousel() {
     <div className="flex flex-col items-end gap-4 w-full">
       <NewAccountDialog onCreate={fetchAccounts} />
 
-      <Carousel className="w-full" draggable>
+      <Carousel className="w-full">
         <CarouselContent>
           {accounts?.map((account) => (
             <CarouselItem key={account.id} className="basis-3/5 max-w-[160px]">
