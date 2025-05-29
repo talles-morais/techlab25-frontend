@@ -54,11 +54,8 @@ export default function AccountsCarousel() {
           {accounts?.map((account) => (
             <CarouselItem key={account.id} className="basis-3/5 max-w-[160px]">
               <AccountCard
-                accountId={account.id}
-                bankName={account.name}
-                accountType={BankAccountTypeLabels[account.type]}
-                balance={account.balance}
-                onAccountDeleted={fetchAccounts}
+                bankAccount={account}
+                onActionCompleted={fetchAccounts}
               />
             </CarouselItem>
           ))}
