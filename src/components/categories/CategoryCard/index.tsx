@@ -1,3 +1,4 @@
+import ConfirmAction from "@/components/shared/ConfirmAction";
 import { fetcher } from "@/lib/fetcher";
 import * as LucideIcons from "lucide-react";
 import { toast } from "sonner";
@@ -21,8 +22,7 @@ export default function CategoryCard({
 }: CategoryCardProps) {
   const Icon = (LucideIcons as any)[category.iconName] || LucideIcons.Activity;
 
-  async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation();
+  async function handleDelete() {
     try {
       await fetcher(`/categories/${category.id}`, {
         method: "DELETE",
@@ -49,13 +49,19 @@ export default function CategoryCard({
         {12} transações este mês
       </span>
 
-      <button
-        type="button"
-        onClick={(e) => handleDelete(e)}
-        className="text-red-800 absolute rounded-full p-1 right-2 top-2 hover:scale-105 hover:bg-gray-100"
+      <ConfirmAction
+        title="Deletar categoria"
+        description="Esta ação é irreversível"
+        onConfirm={handleDelete}
       >
-        <LucideIcons.Trash2 size={18} />
-      </button>
+        <button
+          type="button"
+          onClick={(e) => e.stopPropagation()}
+          className="text-red-800 absolute rounded-full p-1 right-2 top-2 hover:scale-105 hover:bg-gray-100"
+        >
+          <LucideIcons.Trash2 size={18} />
+        </button>
+      </ConfirmAction>
     </div>
   );
 }

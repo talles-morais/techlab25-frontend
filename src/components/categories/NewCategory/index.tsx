@@ -16,6 +16,7 @@ import { IconPickerDialog } from "../IconPickerDialog"; // ajuste a importação
 import { useState } from "react";
 import * as LucideIcons from "lucide-react";
 import { fetcher } from "@/lib/fetcher";
+
 interface NewCategoryProps {
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
@@ -32,7 +33,7 @@ export default function NewCategory({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await fetcher("/categories/create", {
+    await fetcher("/categories", {
       method: "POST",
       body: JSON.stringify({
         name,

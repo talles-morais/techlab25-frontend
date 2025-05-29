@@ -29,7 +29,7 @@ export default function CategoryList() {
         method: "GET",
       });
 
-      if (response) setCategories(response);
+      if (response.data) setCategories(response.data);
     } catch (error) {
       console.error(error);
     } finally {

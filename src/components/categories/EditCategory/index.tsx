@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/shadcnui/dialog";
 import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
