@@ -32,7 +32,7 @@ export default function NewCategory({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await fetcher("/categories/create", {
+    await fetcher("/categories", {
       method: "POST",
       body: JSON.stringify({
         name,
