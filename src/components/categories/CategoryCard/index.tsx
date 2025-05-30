@@ -3,10 +3,12 @@ import { fetcher } from "@/lib/fetcher";
 import * as LucideIcons from "lucide-react";
 import { toast } from "sonner";
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
   iconName: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface CategoryCardProps {

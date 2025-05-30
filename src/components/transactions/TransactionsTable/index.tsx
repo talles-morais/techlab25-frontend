@@ -1,6 +1,6 @@
+"use client";
 import {
   Table,
-  TableCaption,
   TableHeader,
   TableRow,
   TableHead,
@@ -8,7 +8,6 @@ import {
   TableCell,
 } from "@/components/shadcnui/table";
 import NewTransaction from "../NewTransaction";
-import { TableFooter } from "@mui/material";
 import {
   Pagination,
   PaginationContent,
@@ -18,8 +17,59 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/shadcnui/pagination";
+import { useEffect, useState } from "react";
+import { fetcher } from "@/lib/fetcher";
+import { BankAccount } from "@/components/accounts/AccountsCarousel";
+import {
+  TransactionType,
+  TransactionTypeLabels,
+} from "@/enums/TransactionType.enum";
+import { Category } from "@/components/categories/CategoryCard";
+
+export interface Transaction {
+  id: string;
+  fromAccount?: BankAccount;
+  toAccount?: BankAccount;
+  amount: number;
+  description: string;
+  date: Date;
+  type: TransactionType;
+  category: Category;
+}
+
+interface TransactionResponseWithPagination {
+  data: Transaction[];
+  hasNext: boolean;
+  hasPrevious: boolean;
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
 
 export default function TransactionsTable() {
+  const [transactions, setTransactions] = useState<Transaction[]>();
+
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        const response = await fetcher<TransactionResponseWithPagination>(
+          "/transactions",
+          {
+            method: "GET",
+          }
+        );
+
+        if (response.data?.data) setTransactions(response.data.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchTransactions();
+  }, []);
+
   return (
     <section className="flex flex-col gap-3 w-full items-end">
       <NewTransaction />
@@ -32,7 +82,6 @@ export default function TransactionsTable() {
               <TableHead>Data</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Valor</TableHead>
-              <TableHead>Conta</TableHead>
               <TableHead>Categoria</TableHead>
               <TableHead>Conta de origem</TableHead>
               <TableHead>Conta de destino</TableHead>
@@ -40,24 +89,35 @@ export default function TransactionsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockTransactions.map((transaction) => (
-              <TableRow key={transaction.descricao}>
-                <TableCell className="font-medium">
-                  {transaction.descricao}
+            {transactions?.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell className="font-bold">
+                  {transaction.description}
                 </TableCell>
-                <TableCell>{transaction.data}</TableCell>
-                <TableCell>{transaction.tipo}</TableCell>
                 <TableCell>
-                  {transaction.valor.toLocaleString("pt-BR", {
+                  {transaction.date
+                    ? new Date(transaction.date).toLocaleDateString("pt-BR")
+                    : "-"}
+                </TableCell>
+                <TableCell>{TransactionTypeLabels[transaction.type]}</TableCell>
+                <TableCell
+                  className={`${
+                    transaction.type === 0
+                      ? "text-green-600"
+                      : transaction.type === 1
+                      ? "text-red-600"
+                      : "text-orange-600"
+                  } font-medium`}
+                >
+                  {transaction.amount.toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   })}
                 </TableCell>
-                <TableCell>{transaction.conta}</TableCell>
-                <TableCell>{transaction.categoria}</TableCell>
-                <TableCell>{transaction.contaOrigem}</TableCell>
-                <TableCell>{transaction.contaDestino}</TableCell>
-                <TableCell>{transaction.cartao}</TableCell>
+                <TableCell>{transaction.category.name}</TableCell>
+                <TableCell>{transaction.fromAccount?.name || "-"}</TableCell>
+                <TableCell>{transaction.toAccount?.name || "-"}</TableCell>
+                <TableCell>{"Visa"}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -83,116 +143,3 @@ export default function TransactionsTable() {
     </section>
   );
 }
-
-const mockTransactions = [
-  {
-    descricao: "Compra supermercado",
-    data: "2025-05-28",
-    tipo: "Despesa",
-    valor: 150.75,
-    conta: "Conta Corrente",
-    categoria: "Alimentação",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "Nubank",
-  },
-  {
-    descricao: "Salário",
-    data: "2025-05-25",
-    tipo: "Receita",
-    valor: 3500.0,
-    conta: "Conta Corrente",
-    categoria: "Salário",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "-",
-  },
-  {
-    descricao: "Transferência para poupança",
-    data: "2025-05-20",
-    tipo: "Transferência",
-    valor: 500.0,
-    conta: "Conta Corrente",
-    categoria: "Transferência",
-    contaOrigem: "Conta Corrente",
-    contaDestino: "Poupança",
-    cartao: "-",
-  },
-  {
-    descricao: "Pagamento cartão",
-    data: "2025-05-18",
-    tipo: "Despesa",
-    valor: 800.0,
-    conta: "Conta Corrente",
-    categoria: "Pagamentos",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "Itaú",
-  },
-  {
-    descricao: "Restaurante",
-    data: "2025-05-15",
-    tipo: "Despesa",
-    valor: 120.0,
-    conta: "Conta Corrente",
-    categoria: "Alimentação",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "Nubank",
-  },
-  {
-    descricao: "Freelance",
-    data: "2025-05-12",
-    tipo: "Receita",
-    valor: 900.0,
-    conta: "Conta Corrente",
-    categoria: "Serviços",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "-",
-  },
-  {
-    descricao: "Internet",
-    data: "2025-05-10",
-    tipo: "Despesa",
-    valor: 99.9,
-    conta: "Conta Corrente",
-    categoria: "Utilidades",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "-",
-  },
-  {
-    descricao: "Transferência recebida",
-    data: "2025-05-08",
-    tipo: "Receita",
-    valor: 200.0,
-    conta: "Conta Corrente",
-    categoria: "Transferência",
-    contaOrigem: "Poupança",
-    contaDestino: "Conta Corrente",
-    cartao: "-",
-  },
-  {
-    descricao: "Farmácia",
-    data: "2025-05-05",
-    tipo: "Despesa",
-    valor: 60.0,
-    conta: "Conta Corrente",
-    categoria: "Saúde",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "Nubank",
-  },
-  {
-    descricao: "Cinema",
-    data: "2025-05-02",
-    tipo: "Despesa",
-    valor: 45.0,
-    conta: "Conta Corrente",
-    categoria: "Lazer",
-    contaOrigem: "-",
-    contaDestino: "-",
-    cartao: "-",
-  },
-];

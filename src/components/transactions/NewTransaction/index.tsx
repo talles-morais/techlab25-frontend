@@ -56,10 +56,6 @@ const formFields: {
 }[] = [
   {
     type: "text",
-    placeholder: "Nome",
-  },
-  {
-    type: "text",
     placeholder: "Descrição",
   },
   {
