@@ -55,53 +55,39 @@ interface TransactionResponseWithPagination {
   totalPages: number;
 }
 
-export default function TransactionsTable() {
-  const [transactions, setTransactions] = useState<Transaction[]>();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [hasPreviousPage, setHasPreviousPage] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [limit, setLimit] = useState(10);
-  const limitOptions = [5, 10, 25, 50];
+interface TransactionsTableProps {
+  transactionsData: Transaction[];
+  isLoading: boolean;
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  limit: number;
+  limitOptions: number[];
+  onPageChange: (page: number) => void;
+  onLimitChange: (limit: number) => void;
+}
 
-  useEffect(() => {
-    async function fetchTransactions(pageToFetch: number) {
-      setIsLoading(true);
-      try {
-        const response = await fetcher<TransactionResponseWithPagination>(
-          `/transactions?page=${pageToFetch}&limit=${limit}`,
-          {
-            method: "GET",
-          }
-        );
-
-        if (response.data) {
-          setTransactions(response.data.data || []);
-          setCurrentPage(response.data.page);
-          setTotalPages(response.data.totalPages);
-          setHasNextPage(response.data.hasNext);
-          setHasPreviousPage(response.data.hasPrevious);
-        }
-      } catch (error) {
-        console.error("Failed to fetch transactions:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchTransactions(currentPage);
-  }, [currentPage, limit]);
-
-  const handlePageChange = (newPage: number) => {
+export default function TransactionsTable({
+  transactionsData,
+  isLoading,
+  currentPage,
+  totalPages,
+  hasNextPage,
+  hasPreviousPage,
+  limit,
+  limitOptions,
+  onPageChange,
+  onLimitChange,
+}: TransactionsTableProps) {
+  const handleInternalPageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      onPageChange(newPage);
     }
   };
 
-  const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
-    setCurrentPage(1); // Reset to first page when limit changes
+  const handleInternalLimitChange = (newLimitString: string) => {
+    onLimitChange(parseInt(newLimitString));
   };
 
   return (
@@ -117,7 +103,7 @@ export default function TransactionsTable() {
 
           <Select
             value={limit.toString()}
-            onValueChange={(value) => handleLimitChange(parseInt(value))}
+            onValueChange={handleInternalLimitChange}
           >
             <SelectTrigger id="limit-select" className="w-[80px]">
               <SelectValue placeholder={limit} />
@@ -155,8 +141,8 @@ export default function TransactionsTable() {
                   Carregando transações...
                 </TableCell>
               </TableRow>
-            ) : transactions && transactions.length > 0 ? (
-              transactions.map((transaction) => (
+            ) : transactionsData && transactionsData.length > 0 ? (
+              transactionsData.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell className="font-bold">
                     {transaction.description}
@@ -208,7 +194,7 @@ export default function TransactionsTable() {
                   onClick={(e) => {
                     e.preventDefault();
                     if (hasPreviousPage) {
-                      handlePageChange(currentPage - 1);
+                      handleInternalPageChange(currentPage - 1);
                     }
                   }}
                   aria-disabled={!hasPreviousPage}
@@ -220,7 +206,7 @@ export default function TransactionsTable() {
               <RenderPaginationItems
                 totalPages={totalPages}
                 currentPage={currentPage}
-                handlePageChange={handlePageChange}
+                handlePageChange={handleInternalPageChange}
               />
               <PaginationItem>
                 <PaginationNext
@@ -228,7 +214,7 @@ export default function TransactionsTable() {
                   onClick={(e) => {
                     e.preventDefault();
                     if (hasNextPage) {
-                      handlePageChange(currentPage + 1);
+                      handleInternalPageChange(currentPage + 1);
                     }
                   }}
                   aria-disabled={!hasNextPage}
