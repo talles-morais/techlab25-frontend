@@ -18,8 +18,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/shadcnui/pagination";
-import { useEffect, useState } from "react";
-import { fetcher } from "@/lib/fetcher";
 import { BankAccount } from "@/components/accounts/AccountsCarousel";
 import {
   TransactionType,
@@ -33,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcnui/select";
+import { Toaster } from "sonner";
 
 export interface Transaction {
   id: string;
@@ -227,6 +226,8 @@ export default function TransactionsTable({
           </Pagination>
         )}
       </div>
+
+      <Toaster richColors/>
     </section>
   );
 }

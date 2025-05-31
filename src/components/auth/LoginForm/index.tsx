@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import FormInput from "../FormInput";
+import FormInput from "../../shared/FormInput";
 import { fetcher } from "@/lib/fetcher";
 import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
