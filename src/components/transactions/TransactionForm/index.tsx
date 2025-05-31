@@ -195,10 +195,7 @@ export default function TransactionForm({
           render={({ field }) => (
             <Select
               value={field.value?.toString()}
-              onValueChange={(value) => {
-                console.log("f", field);
-                field.onChange(Number(value));
-              }}
+              onValueChange={(value) => field.onChange(Number(value))}
               disabled={isLoading}
             >
               <SelectTrigger

@@ -11,7 +11,7 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import { TransactionFormData } from "@/schemas/newTransactionValidator";
 
 interface InputsForAccountSelectionProps {
-  transactionType: TransactionFormData["type"]  | undefined;
+  transactionType: TransactionFormData["type"] | undefined;
   control: Control<TransactionFormData>;
   errors: FieldErrors<TransactionFormData>;
   accounts: BankAccount[];
@@ -23,9 +23,6 @@ export default function InputsForAccountSelection({
   errors,
   accounts,
 }: InputsForAccountSelectionProps) {
-  console.log(transactionType);
-  
-
   const renderAccountSelect = (
     name: "fromAccountId" | "toAccountId",
     label: string,

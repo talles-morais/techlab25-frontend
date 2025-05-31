@@ -18,7 +18,9 @@ interface NewTransactionProps {
   handleTransactionCreated: () => void;
 }
 
-export default function NewTransaction({ handleTransactionCreated }: NewTransactionProps) {
+export default function NewTransaction({
+  handleTransactionCreated,
+}: NewTransactionProps) {
   const [open, setOpen] = useState(false);
   const handleFormSubmit = async (data: TransactionFormData) => {
     try {
@@ -28,10 +30,9 @@ export default function NewTransaction({ handleTransactionCreated }: NewTransact
       });
       if (response.ok) {
         toast.success("Transação adicionada com sucesso");
-        console.log("Transação salva com sucesso!");
         setOpen(false); // Fecha o modal
       }
-      handleTransactionCreated()
+      handleTransactionCreated();
     } catch (error: any) {
       const message = error?.message || "Erro ao adicionar transação";
       toast.error(message);

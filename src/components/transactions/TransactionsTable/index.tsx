@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableHeader,
@@ -31,7 +31,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcnui/select";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
+import { Pencil, Trash2 } from "lucide-react";
+import { fetcher } from "@/lib/fetcher";
+import ConfirmAction from "@/components/shared/ConfirmAction";
+import EditTransactionDialog from "../EditTransactionDialog";
 
 export interface Transaction {
   id: string;
@@ -55,7 +59,7 @@ interface TransactionsTableProps {
   limitOptions: number[];
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
-  refreshKey: () => void
+  refreshKey: () => void;
 }
 
 export default function TransactionsTable({
@@ -69,8 +73,28 @@ export default function TransactionsTable({
   limitOptions,
   onPageChange,
   onLimitChange,
-  refreshKey
+  refreshKey,
 }: TransactionsTableProps) {
+  const [editingTransactionId, setEditingTransactionId] = useState<
+    string | null
+  >(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleOpenEditModal = (transaction: Transaction) => {
+    setEditingTransactionId(transaction.id);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingTransactionId(null);
+  };
+
+  const handleTransactionSuccessfullyUpdated = () => {
+    refreshKey();
+    handleCloseEditModal();
+  };
+
   const handleInternalPageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       onPageChange(newPage);
@@ -79,6 +103,18 @@ export default function TransactionsTable({
 
   const handleInternalLimitChange = (newLimitString: string) => {
     onLimitChange(parseInt(newLimitString));
+  };
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    try {
+      await fetcher(`/transactions/${transactionId}`, { method: "DELETE" });
+
+      toast.success("Transação deletada com sucesso!");
+      refreshKey();
+    } catch (error) {
+      console.error("Erro ao deletar transação:", error);
+      toast.error("Erro ao deletar transação. Tente novamente.");
+    }
   };
 
   return (
@@ -108,7 +144,7 @@ export default function TransactionsTable({
             </SelectContent>
           </Select>
         </div>
-        <NewTransaction handleTransactionCreated={refreshKey}/>
+        <NewTransaction handleTransactionCreated={refreshKey} />
       </div>
 
       <div className="rounded-lg border flex flex-col w-full">
@@ -123,6 +159,8 @@ export default function TransactionsTable({
               <TableHead>Conta de origem</TableHead>
               <TableHead>Conta de destino</TableHead>
               <TableHead>Cartão</TableHead>
+              <TableHead>Editar</TableHead>
+              <TableHead>Deletar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -164,6 +202,25 @@ export default function TransactionsTable({
                   <TableCell>{transaction.fromAccount?.name || "-"}</TableCell>
                   <TableCell>{transaction.toAccount?.name || "-"}</TableCell>
                   <TableCell>{"Visa"}</TableCell>
+                  <TableCell>
+                    <Pencil
+                      size={20}
+                      className="mx-auto"
+                      onClick={() => handleOpenEditModal(transaction)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <ConfirmAction
+                      title="Deletar transação"
+                      description="Esta ação é irreversível"
+                      onConfirm={() => handleDeleteTransaction(transaction.id)}
+                    >
+                      <Trash2
+                        size={20}
+                        className="text-red-600 mx-auto cursor-pointer hover:text-red-800"
+                      />
+                    </ConfirmAction>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -219,7 +276,15 @@ export default function TransactionsTable({
         )}
       </div>
 
-      <Toaster richColors/>
+      {isEditModalOpen && editingTransactionId && (
+        <EditTransactionDialog
+          transactionId={editingTransactionId}
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onTransactionUpdated={handleTransactionSuccessfullyUpdated}
+        />
+      )}
+      <Toaster richColors />
     </section>
   );
 }
