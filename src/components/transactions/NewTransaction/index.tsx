@@ -15,7 +15,7 @@ import { fetcher } from "@/lib/fetcher";
 import { toast } from "sonner";
 
 interface NewTransactionProps {
-  handleTransactionCreated: () => void;
+  handleTransactionCreated?: () => void;
 }
 
 export default function NewTransaction({
@@ -30,14 +30,14 @@ export default function NewTransaction({
       });
       if (response.ok) {
         toast.success("Transação adicionada com sucesso");
-        setOpen(false); // Fecha o modal
+        setOpen(false);
       }
-      handleTransactionCreated();
+      if (handleTransactionCreated) handleTransactionCreated();
     } catch (error: any) {
       const message = error?.message || "Erro ao adicionar transação";
       toast.error(message);
     }
-    setOpen(false); // Fecha o modal após o envio (ou sucesso da API)
+    setOpen(false);
   };
 
   const handleCancel = () => {
