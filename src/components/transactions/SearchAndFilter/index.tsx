@@ -1,54 +1,119 @@
+"use client";
+
+import React, { useState } from "react";
 import { ArrowDownZa, Funnel, Search, XCircle } from "lucide-react";
+
+import { Button } from "@/components/shadcnui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/shadcnui/popover";
+
+import FilterPopoverContent from "../FilterPopover";
+import SortPopoverContent from "../SortPopover";
+import {
+  FilterValues,
+  SortValues,
+} from "@/components/shared/types/searchAndFilterTypes"
 
 interface SearchAndFilterProps {
   searchTerm: string;
-  onSearchChange: (term: string) => void;
-  onClearAll: () => void;
-  // TODO: Add props for filter values and handlers
-  // TODO: Add props for sort values and handlers
+  onSearchTermChange: (term: string) => void;
+
+  activeFilters: FilterValues;
+  onApplyFilters: (filtersToApply: FilterValues) => void;
+  onClearFilters: () => void;
+
+  activeSort: SortValues;
+  onApplySort: (sortToApply: SortValues) => void;
 }
 
 export default function SearchAndFilter({
   searchTerm,
-  onSearchChange,
-  onClearAll,
+  onSearchTermChange,
+  activeFilters,
+  onApplyFilters,
+  onClearFilters,
+  activeSort,
+  onApplySort,
 }: SearchAndFilterProps) {
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(event.target.value);
+  const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState(false);
+  const [isSortPopoverOpen, setIsSortPopoverOpen] = useState(false);
+
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    onSearchTermChange(event.target.value);
   };
 
   const handleClearSearch = () => {
-    onSearchChange("")
-  }
+    onSearchTermChange("");
+  };
 
   return (
-    <section className="flex flex-col w-full gap-3">
-      <div className="flex flex-1 items-center gap-2 bg-white text-md md:text-base rounded-lg border border-light-secondary py-2 px-3">
-        <Search size={16} />
+    <section className="flex flex-col w-full gap-4 my-4">
+      <div className="flex flex-1 items-center gap-2 bg-white text-md md:text-base rounded-lg border border-input py-2 px-3 shadow-sm">
+        <Search size={20} className="text-muted-foreground" />
         <input
-          className="w-full focus:outline-none"
+          className="w-full focus:outline-none bg-transparent placeholder:text-muted-foreground"
           type="text"
-          placeholder="Pesquisar categoria"
+          placeholder="Pesquisar..."
           value={searchTerm}
-          onChange={handleInputChange}
+          onChange={handleSearchInputChange}
         />
         {searchTerm && (
-          <button onClick={handleClearSearch} className="text-gray-500 hover:text-gray-700">
-            <XCircle size={18} />
+          <button
+            type="button"
+            onClick={handleClearSearch}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <XCircle size={20} />
           </button>
         )}
       </div>
 
-      <div className="flex justify-between">
-        <button className="flex items-center gap-2 bg-white text-md md:text-base rounded-lg border border-light-secondary py-2 px-3 cursor-pointer hover:scale-105 transition-all">
-          <span>Filtrar</span>
-          <Funnel />
-        </button>
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
+        {/* Filter Popover */}
+        <Popover open={isFilterPopoverOpen} onOpenChange={setIsFilterPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto flex items-center gap-2 justify-center"
+            >
+              <span>Filtrar</span>
+              <Funnel size={16} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-fit" side="bottom" align="start">
+            <FilterPopoverContent
+              initialFilters={activeFilters}
+              onApply={onApplyFilters}
+              onClear={onClearFilters}
+              onClose={() => setIsFilterPopoverOpen(false)}
+            />
+          </PopoverContent>
+        </Popover>
 
-        <button className="flex items-center gap-2 bg-white text-md md:text-base rounded-lg border border-light-secondary py-2 px-3 cursor-pointer hover:scale-105 transition-all">
-          <span>Ordenar</span>
-          <ArrowDownZa />
-        </button>
+        {/* Sort Popover */}
+        <Popover open={isSortPopoverOpen} onOpenChange={setIsSortPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto flex items-center gap-2 justify-center"
+            >
+              <span>Ordenar</span>
+              <ArrowDownZa size={16} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64" side="bottom" align="end">
+            <SortPopoverContent
+              initialSort={activeSort}
+              onApply={onApplySort}
+              onClose={() => setIsSortPopoverOpen(false)}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </section>
   );
