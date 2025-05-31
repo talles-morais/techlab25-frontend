@@ -14,7 +14,11 @@ import { useState } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { toast } from "sonner";
 
-export default function NewTransaction() {
+interface NewTransactionProps {
+  handleTransactionCreated: () => void;
+}
+
+export default function NewTransaction({ handleTransactionCreated }: NewTransactionProps) {
   const [open, setOpen] = useState(false);
   const handleFormSubmit = async (data: TransactionFormData) => {
     try {
@@ -27,6 +31,7 @@ export default function NewTransaction() {
         console.log("Transação salva com sucesso!");
         setOpen(false); // Fecha o modal
       }
+      handleTransactionCreated()
     } catch (error: any) {
       const message = error?.message || "Erro ao adicionar transação";
       toast.error(message);

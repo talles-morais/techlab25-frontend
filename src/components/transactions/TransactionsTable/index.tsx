@@ -44,16 +44,6 @@ export interface Transaction {
   category: Category;
 }
 
-interface TransactionResponseWithPagination {
-  data: Transaction[];
-  hasNext: boolean;
-  hasPrevious: boolean;
-  limit: number;
-  page: number;
-  total: number;
-  totalPages: number;
-}
-
 interface TransactionsTableProps {
   transactionsData: Transaction[];
   isLoading: boolean;
@@ -65,6 +55,7 @@ interface TransactionsTableProps {
   limitOptions: number[];
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
+  refreshKey: () => void
 }
 
 export default function TransactionsTable({
@@ -78,6 +69,7 @@ export default function TransactionsTable({
   limitOptions,
   onPageChange,
   onLimitChange,
+  refreshKey
 }: TransactionsTableProps) {
   const handleInternalPageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -116,7 +108,7 @@ export default function TransactionsTable({
             </SelectContent>
           </Select>
         </div>
-        <NewTransaction />
+        <NewTransaction handleTransactionCreated={refreshKey}/>
       </div>
 
       <div className="rounded-lg border flex flex-col w-full">
@@ -185,7 +177,7 @@ export default function TransactionsTable({
         </Table>
 
         {totalPages >= 1 && !isLoading && (
-          <Pagination>
+          <Pagination className="py-3">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious

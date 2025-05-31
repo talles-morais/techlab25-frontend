@@ -10,7 +10,7 @@ export default function ContasPage() {
         </section>
 
         <section className="py-2 bg-light-background rounded-lg">
-          {/* transações */}
+          
         </section>
       </main>
     </div>
