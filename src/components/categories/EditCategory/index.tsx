@@ -1,6 +1,6 @@
 "use client";
 
-import FormInput from "@/components/auth/FormInput";
+import FormInput from "@/components/shared/FormInput";
 import { Button } from "@/components/shadcnui/button";
 import {
   Dialog,

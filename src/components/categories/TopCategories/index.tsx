@@ -52,7 +52,7 @@ const chartConfig = {
 
 export default function TopCategories() {
   return (
-    <Card className="flex flex-col shadow-none border-none">
+    <Card className="flex flex-col shadow-none border-none min-w-[300px]">
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}

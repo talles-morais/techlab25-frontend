@@ -1,20 +1,51 @@
 "use client";
-import FormInput from "@/components/auth/FormInput";
 import { Button } from "@/components/shadcnui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcnui/dialog";
 import { Plus } from "lucide-react";
+import TransactionForm from "../TransactionForm";
+import { TransactionFormData } from "@/schemas/newTransactionValidator";
+import { useState } from "react";
+import { fetcher } from "@/lib/fetcher";
+import { toast } from "sonner";
 
-export default function NewTransaction() {
+interface NewTransactionProps {
+  handleTransactionCreated?: () => void;
+}
+
+export default function NewTransaction({
+  handleTransactionCreated,
+}: NewTransactionProps) {
+  const [open, setOpen] = useState(false);
+  const handleFormSubmit = async (data: TransactionFormData) => {
+    try {
+      const response = await fetcher("/transactions", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        toast.success("Transação adicionada com sucesso");
+        setOpen(false);
+      }
+      if (handleTransactionCreated) handleTransactionCreated();
+    } catch (error: any) {
+      const message = error?.message || "Erro ao adicionar transação";
+      toast.error(message);
+    }
+    setOpen(false);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="border border-light-secondary bg-primary ">
           Nova transação <Plus />
@@ -27,47 +58,11 @@ export default function NewTransaction() {
             Criar nova transação
           </DialogTitle>
         </DialogHeader>
-        <form className="flex flex-col gap-2 w-full">
-          {formFields.map((field) => (
-            <FormInput
-              key={field.placeholder}
-              type={field.type}
-              placeholder={field.placeholder}
-            />
-          ))}
-        </form>
-        <DialogFooter className="flex flex-row w-full justify-between ">
-          <DialogClose asChild>
-            <Button type="button" variant="destructive" className="text-lg">
-              Cancelar
-            </Button>
-          </DialogClose>
-
-          <Button className="flex-1 font-bold text-lg">Salvar</Button>
-        </DialogFooter>
+        <TransactionForm
+          onFormSubmit={handleFormSubmit}
+          onCancel={handleCancel}
+        />
       </DialogContent>
     </Dialog>
   );
 }
-
-const formFields: {
-  type: string;
-  placeholder: string;
-}[] = [
-  {
-    type: "text",
-    placeholder: "Nome",
-  },
-  {
-    type: "text",
-    placeholder: "Descrição",
-  },
-  {
-    type: "number",
-    placeholder: "Valor",
-  },
-  {
-    type: "date",
-    placeholder: "Data",
-  },
-];
