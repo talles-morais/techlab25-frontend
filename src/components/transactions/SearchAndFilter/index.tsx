@@ -52,8 +52,8 @@ export default function SearchAndFilter({
   };
 
   return (
-    <section className="flex flex-col w-full gap-4 my-4">
-      <div className="flex flex-1 items-center gap-2 bg-white text-md md:text-base rounded-lg border border-input py-2 px-3 shadow-sm">
+    <section className="flex flex-col w-full gap-4 my-4 max-w-[400px]">
+      <div className="flex items-center gap-2 bg-white text-md md:text-base rounded-lg border border-input py-2 px-3 shadow-sm">
         <Search size={20} className="text-muted-foreground" />
         <input
           className="w-full focus:outline-none bg-transparent placeholder:text-muted-foreground"
