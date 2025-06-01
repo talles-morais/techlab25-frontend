@@ -24,7 +24,7 @@ import Image from "next/image";
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Contas", url: "/contas", icon: Landmark },
-  { title: "Cartões", url: "/cartoes", icon: CreditCard },
+  // { title: "Cartões", url: "/cartoes", icon: CreditCard },
   { title: "Categorias", url: "/categorias", icon: Ungroup },
   { title: "Transações", url: "/transacoes", icon: BadgeCent },
 ];
@@ -34,8 +34,6 @@ export function AppSidebar() {
 
   return (
     <div className="flex relative">
-
-      {/** Sidebar só exibe se for mobile OU desktop com `open` */}
       <Sidebar side="right" collapsible="offcanvas">
         <SidebarHeader className="pt-4">
           <button

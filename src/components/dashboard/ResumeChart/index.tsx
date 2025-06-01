@@ -28,8 +28,6 @@ interface Transaction {
   category?: { name: string };
 }
 
-interface ResumeChartProps {}
-
 const chartConfig = {
   gastos: {
     label: "Gastos",
@@ -43,7 +41,7 @@ const formatDateKey = (date: Date): string => {
   return date.toISOString().split("T")[0];
 };
 
-export default function ResumeChart({}: ResumeChartProps) {
+export default function ResumeChart() {
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
